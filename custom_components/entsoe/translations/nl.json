@@ -6,7 +6,7 @@
           "data": {
             "api_key": "Your API Key",
             "area": "Area*",
-            "modifyer": "Price Modifyer Template (Optional)",
+            "modifier": "Price Modifier Template (Optional)",
             "name": "Name (Optional)"
           }
       }
@@ -24,7 +24,7 @@
         "data": {
           "api_key": "Your API Key",
           "area": "Area*",
-          "modifyer": "Price Modifyer Template (Optional)",
+          "modifier": "Price Modifier Template (Optional)",
           "name": "Name (Optional)"
         }
       }

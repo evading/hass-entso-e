@@ -21,12 +21,12 @@ CONF_API_KEY = "api_key"
 CONF_ENTITY_NAME = "name"
 CONF_AREA = "area"
 CONF_COORDINATOR = "coordinator"
-CONF_MODIFYER = "modifyer"
+CONF_MODIFIER = "modifier"
 CONF_ADVANCED_OPTIONS = "advanced_options"
 CONF_CALCULATION_MODE = "calculation_mode"
 CONF_VAT_VALUE = "VAT_value"
 
-DEFAULT_MODIFYER = "{{current_price}}"
+DEFAULT_MODIFIER = "{{current_price}}"
 
 #default is only for internal use / backwards compatibility
 CALCULATION_MODE = { "default": "publish", "rotation": "rotation", "sliding": "sliding", "publish": "publish" }

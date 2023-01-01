@@ -21,7 +21,7 @@ from homeassistant.helpers.selector import (
 from homeassistant.helpers.template import Template
 
 from .const import (
-    CONF_MODIFYER,
+    CONF_MODIFIER,
     CONF_API_KEY,
     CONF_ENTITY_NAME,
     CONF_AREA,
@@ -32,7 +32,7 @@ from .const import (
     COMPONENT_TITLE,
     UNIQUE_ID,
     AREA_INFO,
-    DEFAULT_MODIFYER,
+    DEFAULT_MODIFIER,
     CALCULATION_MODE
 )
 
@@ -45,7 +45,7 @@ class EntsoeFlowHandler(ConfigFlow, domain=DOMAIN):
         self.area = None
         self.advanced_options = None
         self.api_key = None
-        self.modifyer = None
+        self.modifier = None
         self.name = ""
 
     VERSION = 1
@@ -84,7 +84,7 @@ class EntsoeFlowHandler(ConfigFlow, domain=DOMAIN):
             if self.advanced_options:
                 return await self.async_step_extra()
             user_input[CONF_VAT_VALUE] = 0
-            user_input[CONF_MODIFYER] = DEFAULT_MODIFYER
+            user_input[CONF_MODIFIER] = DEFAULT_MODIFIER
             user_input[CONF_CALCULATION_MODE] = CALCULATION_MODE["default"]
             if not already_configured:
                 return self.async_create_entry(
@@ -93,7 +93,7 @@ class EntsoeFlowHandler(ConfigFlow, domain=DOMAIN):
                     options={
                         CONF_API_KEY: user_input[CONF_API_KEY],
                         CONF_AREA: user_input[CONF_AREA],
-                        CONF_MODIFYER: user_input[CONF_MODIFYER],
+                        CONF_MODIFIER: user_input[CONF_MODIFIER],
                         CONF_ADVANCED_OPTIONS: user_input[CONF_ADVANCED_OPTIONS],
                         CONF_VAT_VALUE: user_input[CONF_VAT_VALUE],
                         CONF_ENTITY_NAME: user_input[CONF_ENTITY_NAME],
@@ -145,27 +145,27 @@ class EntsoeFlowHandler(ConfigFlow, domain=DOMAIN):
                 already_configured = True
 
             template_ok = False
-            if user_input[CONF_MODIFYER] in (None, ""):
-                user_input[CONF_MODIFYER] = DEFAULT_MODIFYER
+            if user_input[CONF_MODIFIER] in (None, ""):
+                user_input[CONF_MODIFIER] = DEFAULT_MODIFIER
             else:
                 # Lets try to remove the most common mistakes, this will still fail if the template
                 # was writte in notepad or something like that..
-                user_input[CONF_MODIFYER] = re.sub(
-                    r"\s{2,}", "", user_input[CONF_MODIFYER]
+                user_input[CONF_MODIFIER] = re.sub(
+                    r"\s{2,}", "", user_input[CONF_MODIFIER]
                 )
 
-            template_ok = await self._valid_template(user_input[CONF_MODIFYER])
+            template_ok = await self._valid_template(user_input[CONF_MODIFIER])
 
             if not already_configured:
                 if template_ok:
-                    if "current_price" in user_input[CONF_MODIFYER]:
+                    if "current_price" in user_input[CONF_MODIFIER]:
                         return self.async_create_entry(
                             title=self.name,
                             data={},
                             options={
                                 CONF_API_KEY: user_input[CONF_API_KEY],
                                 CONF_AREA: user_input[CONF_AREA],
-                                CONF_MODIFYER: user_input[CONF_MODIFYER],
+                                CONF_MODIFIER: user_input[CONF_MODIFIER],
                                 CONF_VAT_VALUE: user_input[CONF_VAT_VALUE],
                                 CONF_ENTITY_NAME: user_input[CONF_ENTITY_NAME],
                                 CONF_CALCULATION_MODE: user_input[CONF_CALCULATION_MODE]
@@ -184,7 +184,7 @@ class EntsoeFlowHandler(ConfigFlow, domain=DOMAIN):
                     vol.Optional(
                         CONF_VAT_VALUE, default=AREA_INFO[self.area]["VAT"]
                     ): vol.All(vol.Coerce(float, "must be a number")),
-                    vol.Optional(CONF_MODIFYER, default=""): TemplateSelector(TemplateSelectorConfig()),
+                    vol.Optional(CONF_MODIFIER, default=""): TemplateSelector(TemplateSelectorConfig()),
                     vol.Optional(CONF_CALCULATION_MODE, default=CALCULATION_MODE["default"]): SelectSelector(
                         SelectSelectorConfig(
                             options=[
@@ -232,19 +232,19 @@ class EntsoeOptionFlowHandler(OptionsFlow):
         if user_input is not None:
             user_input[CONF_ENTITY_NAME] = self.config_entry.options[CONF_ENTITY_NAME]
             template_ok = False
-            if user_input[CONF_MODIFYER] in (None, ""):
-                user_input[CONF_MODIFYER] = DEFAULT_MODIFYER
+            if user_input[CONF_MODIFIER] in (None, ""):
+                user_input[CONF_MODIFIER] = DEFAULT_MODIFIER
             else:
                 # Lets try to remove the most common mistakes, this will still fail if the template
                 # was written in notepad or something like that..
-                user_input[CONF_MODIFYER] = re.sub(
-                    r"\s{2,}", "", user_input[CONF_MODIFYER]
+                user_input[CONF_MODIFIER] = re.sub(
+                    r"\s{2,}", "", user_input[CONF_MODIFIER]
                 )
 
-            template_ok = await self._valid_template(user_input[CONF_MODIFYER])
+            template_ok = await self._valid_template(user_input[CONF_MODIFIER])
 
             if template_ok:
-                if "current_price" in user_input[CONF_MODIFYER]:
+                if "current_price" in user_input[CONF_MODIFIER]:
                     return self.async_create_entry(title="", data=user_input)
                 errors["base"] = "missing_current_price"
             else:
@@ -275,7 +275,7 @@ class EntsoeOptionFlowHandler(OptionsFlow):
                         default=self.config_entry.options[CONF_VAT_VALUE],
                     ): vol.All(vol.Coerce(float, "must be a number")),
                     vol.Optional(
-                        CONF_MODIFYER, default=self.config_entry.options[CONF_MODIFYER]
+                        CONF_MODIFIER, default=self.config_entry.options[CONF_MODIFIER]
                     ):  TemplateSelector(TemplateSelectorConfig()),
                     vol.Optional(CONF_CALCULATION_MODE, default=calculation_mode_default ): SelectSelector(
                         SelectSelectorConfig(

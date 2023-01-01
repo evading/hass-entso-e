@@ -20,17 +20,17 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.template import Template, attach
 from jinja2 import pass_context
 
-from .const import DEFAULT_MODIFYER, AREA_INFO, CALCULATION_MODE
+from .const import DEFAULT_MODIFIER, AREA_INFO, CALCULATION_MODE
 
 
 class EntsoeCoordinator(DataUpdateCoordinator):
     """Get the latest data and update the states."""
 
-    def __init__(self, hass: HomeAssistant, api_key, area, modifyer, calculation_mode = CALCULATION_MODE["default"], VAT = 0) -> None:
+    def __init__(self, hass: HomeAssistant, api_key, area, modifier, calculation_mode = CALCULATION_MODE["default"], VAT = 0) -> None:
         """Initialize the data object."""
         self.hass = hass
         self.api_key = api_key
-        self.modifyer = modifyer
+        self.modifier = modifier
         self.area = AREA_INFO[area]["code"]
         self.calculation_mode = calculation_mode
         self.vat = VAT
@@ -38,16 +38,16 @@ class EntsoeCoordinator(DataUpdateCoordinator):
 
         # Check incase the sensor was setup using config flow.
         # This blow up if the template isnt valid.
-        if not isinstance(self.modifyer, Template):
-            if self.modifyer in (None, ""):
-                self.modifyer = DEFAULT_MODIFYER
-            self.modifyer = cv.template(self.modifyer)
+        if not isinstance(self.modifier, Template):
+            if self.modifier in (None, ""):
+                self.modifier = DEFAULT_MODIFIER
+            self.modifier = cv.template(self.modifier)
         # check for yaml setup.
         else:
-            if self.modifyer.template in ("", None):
-                self.modifyer = cv.template(DEFAULT_MODIFYER)
+            if self.modifier.template in ("", None):
+                self.modifier = cv.template(DEFAULT_MODIFIER)
 
-        attach(self.hass, self.modifyer)
+        attach(self.hass, self.modifier)
 
         logger = logging.getLogger(__name__)
         super().__init__(
@@ -74,9 +74,9 @@ class EntsoeCoordinator(DataUpdateCoordinator):
 
                 return pass_context(inner)
 
-            template_value = self.modifyer.async_render(now=faker(), current_price=price)
+            template_value = self.modifier.async_render(now=faker(), current_price=price)
         else:
-            template_value = self.modifyer.async_render()
+            template_value = self.modifier.async_render()
 
         price = round(float(template_value) * (1 + self.vat), 5)
 
