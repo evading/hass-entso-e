@@ -102,15 +102,6 @@ class EntsoeSensor(CoordinatorEntity, RestoreSensor):
 
         super().__init__(coordinator)
 
-    async def async_added_to_hass(self):
-        """Handle entity which will be added."""
-        await super().async_added_to_hass()
-        if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
-            # new introduced in 2022.04
-            if last_sensor_data.native_value is not None:
-                self._attr_native_value = last_sensor_data.native_value
-            if last_sensor_data._attr_extra_state_attributes is not None:
-                self._attr_extra_state_attributes = dict(last_sensor_data._attr_extra_state_attributes)
 
     async def async_update(self) -> None:
         """Get the latest data and updates the states."""
